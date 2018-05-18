@@ -1,0 +1,62 @@
+body {
+    background-color: #eee;
+    padding-top: 20px;
+    font-family: 'Arvo', serif;
+    color: white;
+    background: url('./ratpack.jpg');
+    background-size: cover;
+}
+.container {
+    text-align: center;
+}
+
+#topBanner {
+  width: 100%;
+  background-color: rgba(142, 14, 14, 0.3);
+  border: 2px solid rgba(204, 202, 52, 0.67);
+  border-radius: 5px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  padding: 10px;
+}
+
+
+
+h2,h3,
+h4,h5,h6 {
+    border-radius: 10px;
+    padding: 5px;
+    background-color: rgba(204, 202, 52, 0.67);
+    margin-bottom: 15px;
+}
+
+.presskey {
+  margin-top: 20px;
+}
+
+#title-image, #gameover-image, #youwin-image{
+    display: block;
+    margin: 0 auto;
+}
+
+
+
+#currentWord {
+    letter-spacing: 10px;
+    /* font-size: 40px; */
+  }
+
+#pressKeyTryAgain,
+#gameover-image,
+#youwin-image { display: none;}
+
+.gameplay-column {
+    padding-top: 20px;
+    border: 3px solid rgba(204, 202, 52, 0.67);
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    min-height: 500px;
+    background-color: rgba(142, 14, 14, 0.3);
+}
