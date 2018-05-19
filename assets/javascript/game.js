@@ -1,7 +1,5 @@
-
-'use strict';
-
-var selectableWords =           // Word list
+// gobal variables
+var words =           // Word list
     [
         "COCKTAIL",
         "MARTINI",
@@ -19,59 +17,43 @@ var selectableWords =           // Word list
         "PETER",
     ];
 
-    const maxTries = 10;            // Maximum number of tries player has
+// total chances to be allowed
+    const chances = 10;
+// track user's guesses
+    var guesses = [];
+// array position of random word
+    var wordChoice;
+// build word in blank word space
+    var wordBuilder = [];
+// track chances
+    var chancesLeft = 0;
+// value to trigger ending message
+    var finished = false;
+// wins tracker
+    var wins = 0;
 
-    var guessedLetters = [];        // Stores the letters the user guessed
-    var currentWordIndex;           // Index of the current word in the array
-    var guessingWord = [];          // This will be the word we actually build to match the current word
-    var remainingGuesses = 0;       // How many tries the player has left
-    var hasFinished = false;        // Flag for 'press any key to try again'
-    var wins = 0;                   // How many wins has the player racked up
 
-    // Game sounds
-    var keySound = new Audio('./assets/sounds/typewriter-key.wav');
-    var winSound = new Audio('./assets/sounds/you-win.wav');
-    var loseSound = new Audio('./assets/sounds/you-lose.wav');
-
-    // Reset our game-level variables
-    function resetGame() {
-        remainingGuesses = maxTries;
-
-        // Use Math.floor to round the random number down to the nearest whole.
-        currentWordIndex = Math.floor(Math.random() * (selectableWords.length));
-
-        // Clear out arrays
-        guessedLetters = [];
-        guessingWord = [];
-
-        // Make sure the hangman image is cleared
-        document.getElementById("hangmanImage").src = "";
-
-        // Build the guessing word and clear it out
-        for (var i = 0; i < selectableWords[currentWordIndex].length; i++) {
-            guessingWord.push("_");
+// Game Reset
+    function reset() {
+// reset number of chances
+        chancesLeft = chances;
+// random word choice
+        wordChoice = Math.floor(Math.random() * (words.length));
+// Clear guesses and word space
+        guesses = [];
+        wordBuilder = [];
+// Build new word space
+        for (var i = 0; i < words[wordChoice].length; i++) {
+            wordBuilder.push("_");
         }
 
-    // Hide game over and win images/text
-    document.getElementById("pressKeyTryAgain").style.cssText= "display: none";
-    document.getElementById("gameover-image").style.cssText = "display: none";
-    document.getElementById("youwin-image").style.cssText = "display: none";
-    // document.getElementById("cheers").style.cssText = "display: none";
-    // document.getElementById("craps").style.cssText = "display: none";
-    // document.getElementById("dean").style.cssText = "display: none";
-    // document.getElementById("frank").style.cssText = "display: none";
-    // document.getElementById("Guys_and_dolls").style.cssText = "display: none";
-    // document.getElementById("joey").style.cssText = "display: none";
-    // document.getElementById("lawford").style.cssText = "display: none";
-    // document.getElementById("martini").style.cssText = "display: none";
-    // document.getElementById("oceans").style.cssText = "display: none";
-    // document.getElementById("sammy").style.cssText = "display: none";
-    // document.getElementById("sands").style.cssText = "display: none";
+// Hide images/text
+      document.getElementById("goAgain").style.cssText= "display: none";
+      document.getElementById("gameover-image").style.cssText = "display: none";
+      document.getElementById("cheersGif").style.cssText = "display: none";
 
-    // Show display
-    // Show display
-    updateDisplay();
-};
+      updateDisplay();
+    };
 
 //  Updates the display on the HTML Page
 function updateDisplay() {
@@ -80,55 +62,44 @@ function updateDisplay() {
 
     // Display how much of the word we've already guessed on screen.
     // Printing the array would add commas (,) - so we concatenate a string from each value in the array.
-    var guessingWordText = "";
-    for (var i = 0; i < guessingWord.length; i++) {
-        guessingWordText += guessingWord[i];
+    var wordBuilderText = "";
+    for (var i = 0; i < wordBuilder.length; i++) {
+        wordBuilderText += wordBuilder[i];
     }
 
     //
-    document.getElementById("currentWord").innerText = guessingWordText;
-    document.getElementById("remainingGuesses").innerText = remainingGuesses;
-    document.getElementById("guessedLetters").innerText = guessedLetters;
+    document.getElementById("currentWord").innerText = wordBuilderText;
+    document.getElementById("chancesLeft").innerText = chancesLeft;
+    document.getElementById("guesses").innerText = guesses;
 };
 
-
-// Updates the image depending on how many guesses
-function updateHangmanImage() {
-    document.getElementById("hangmanImage").src = "assets/images/" + (maxTries - remainingGuesses) + ".png";
-};
-
-// This function takes a letter and finds all instances of
-// appearance in the string and replaces them in the guess word.
+// compare user's letter guess to all letters in the string and, if present, fill them in the appropriate blanks
 function evaluateGuess(letter) {
     // Array to store positions of letters in string
     var positions = [];
-
-    // Loop through word finding all instances of guessed letter, store the indicies in an array.
-    for (var i = 0; i < selectableWords[currentWordIndex].length; i++) {
-        if(selectableWords[currentWordIndex][i] === letter) {
+// Loop through word finding all instances of guessed letter, store the indicies in an array.
+    for (var i = 0; i < words[wordChoice].length; i++) {
+        if(words[wordChoice][i] === letter) {
             positions.push(i);
         }
     }
-
-    // if there are no indicies, remove a guess and update the hangman image
+// if letter guess is not present in the value, remove a chance
     if (positions.length <= 0) {
-        remainingGuesses--;
-        updateHangmanImage();
-    } else {
-        // Loop through all the indicies and replace the '_' with a letter.
+        chancesLeft--; }
+        else {
+        // Loop to fill in letters
         for(var i = 0; i < positions.length; i++) {
-            guessingWord[positions[i]] = letter;
+            wordBuilder[positions[i]] = letter;
         }
     }
 };
-// Checks for a win by seeing if there are any remaining underscores in the guessingword we are building.
+// Checks for a win by seeing if there are any remaining blanks in the wordBuilder
 function checkWin() {
-    if(guessingWord.indexOf("_") === -1) {
-        document.getElementById("youwin-image").style.cssText = "display: block";
-        document.getElementById("pressKeyTryAgain").style.cssText= "display: block";
+    if(wordBuilder.indexOf("_") === -1) {
+        document.getElementById("cheersGif").style.cssText = "display: block";
+        document.getElementById("goAgain").style.cssText= "display: block";
         wins++;
-        winSound.play();
-        hasFinished = true;
+        finished = true;
     }
 };
 
@@ -136,37 +107,31 @@ function checkWin() {
 // Checks for a loss
 function checkLoss()
 {
-    if(remainingGuesses <= 0) {
-        loseSound.play();
+    if(chancesLeft <= 0) {
         document.getElementById("gameover-image").style.cssText = "display: block";
-        document.getElementById("pressKeyTryAgain").style.cssText = "display:block";
-        hasFinished = true;
+        document.getElementById("tryAgain").style.cssText = "display:block";
+        finished = true;
     }
 }
 
 // Makes a guess
 function makeGuess(letter) {
-    if (remainingGuesses > 0) {
-        // Make sure we didn't use this letter yet
-        if (guessedLetters.indexOf(letter) === -1) {
-            guessedLetters.push(letter);
+    if (chancesLeft > 0) {
+// check letter against previous guesses
+        if (guesses.indexOf(letter) === -1) {
+            guesses.push(letter);
             evaluateGuess(letter);
         }
     }
-
 };
 
-
-// Event listener
 document.onkeydown = function(event) {
-    // If we finished a game, dump one keystroke and reset.
-    if(hasFinished) {
-        resetGame();
-        hasFinished = false;
+  if(finished) {
+        reset();
+        finished = false;
     } else {
-        // Check to make sure a-z was pressed.
+
         if(event.keyCode >= 65 && event.keyCode <= 90) {
-            keySound.play();
             makeGuess(event.key.toUpperCase());
             updateDisplay();
             checkWin();
