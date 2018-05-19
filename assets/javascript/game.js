@@ -51,7 +51,7 @@ var words =           // Word list
       document.getElementById("goAgain").style.cssText= "display: none";
       document.getElementById("gameover-image").style.cssText = "display: none";
       document.getElementById("cheersGif").style.cssText = "display: none";
-
+      document.getElementById("tryAgain").style.cssText = "display: none";
       updateDisplay();
     };
 
